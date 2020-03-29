@@ -4,9 +4,11 @@
 #define BAYES_MODEL_H_
 
 #include "image.h"
+#include <string>
 
 #include <cstdlib>
 
+using std::string;
 
 namespace bayes {
 
@@ -49,6 +51,21 @@ class Model {
   // [0][0] for class 0 is shaded.
  private:
   double probs_[kImageSize][kImageSize][kNumClasses][kNumShades];
+
+ public:
+  // Array representing the number of occurrences of a specific class
+  int class_num_[kNumClasses];
+
+  // Populate class_num_ from data from the given file
+  void SetClassNum(const string& filename);
+
+  // Given a file, populate the probs_ matrix correctly
+  // NOTE: images is "data/trainingimages" and labels is "data/traininglabels"
+  void CalculateProbabilities(const string& images, const string& labels);
+
+  // Create the model file and populate w data
+  void CreateModelFile(const string& filename);
+
 };
 
 }  // namespace bayes

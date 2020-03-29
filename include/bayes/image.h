@@ -4,7 +4,7 @@
 #define BAYES_IMAGE_H_
 
 #include <cstdlib>
-
+#include <vector>
 
 namespace bayes {
 
