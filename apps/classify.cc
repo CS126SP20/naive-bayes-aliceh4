@@ -17,7 +17,7 @@ DEFINE_bool(happy, false, "Whether the greeting is a happy greeting");
 
 
 int main(int argc, char** argv) {
-  gflags::SetUsageMessage(
+  /*gflags::SetUsageMessage(
       "Greets you with your name. Pass --helpshort for options.");
 
   gflags::ParseCommandLineFlags(&argc, &argv, true);
@@ -30,5 +30,9 @@ int main(int argc, char** argv) {
   const std::string punctuation = FLAGS_happy ? "!" : ".";
 
   std::cout << "Hello, " << FLAGS_name << punctuation << std::endl;
-  return EXIT_SUCCESS;
+  return EXIT_SUCCESS; */
+  // Create model
+  bayes::Model model;
+  model.SetClassNum("data/traininglabels");
+  model.CalculateProbabilities("data/trainingimages", "data/traininglabels");
 }

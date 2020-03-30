@@ -11,6 +11,8 @@
 const int kShadedIndex = 1;
 const int kWhiteIndex = 0;
 
+using json = nlohmann::json;
+
 namespace bayes {
 
 void Model::SetClassNum(const string& filename) {
@@ -26,9 +28,27 @@ void Model::SetClassNum(const string& filename) {
     // Increase the corresponding class index by one
     class_num_[number]++;
   }
+
+  for (int i = 0; i < 10; i++) {
+    std::cout << class_num_[i] << std::endl;
+  }
 }
 
 void Model::CalculateProbabilities(const string& images, const string& labels) {
+  // Initialize probs_ to be all 0
+  /*for (int i = 0; i < kImageSize; i++) {
+    for (int j = 0; j < kImageSize; j++) {
+      for (int c = 0; c < kNumClasses; c++) {
+        for (int s = 0; s < kNumShades; s++) {
+          probs_[i][j][c][s] = 0;
+        }
+      }
+    }
+  }*/
+
+
+  SetClassNum(labels);
+
   std::vector<int> class_locations;
   std::vector<Image> image_vector = GetClassImages(images);
   // Loop through each class
@@ -38,11 +58,14 @@ void Model::CalculateProbabilities(const string& images, const string& labels) {
     // Now loop thru the pixels
     for (int j = 0; j < kImageSize; j++) {
       for (int k = 0; k < kImageSize; k++) {
-        // Populate every vector?? I have no idea ahhhh
+        // Populate every vector??
         GetProbabilityAtLocation(j, k, c, class_locations, image_vector);
       }
     }
   }
+
+  // Now create the file
+  CreateJsonFile();
 }
 
 double Model::GetProbabilityAtLocation(int i, int j, int class_num,
@@ -105,11 +128,33 @@ std::vector<Image> Model::GetClassImages(const string& images) {
 
 void Model::CreateJsonFile() {
   // Create an empty json object
-  nlohmann::json j;
+  json j;
   // Go through our classes and put in corresponding matrices?
-  for (int i = 0; i < kNumClasses; i++) {
-    
+  for (int c = 0; c < kNumClasses; c++) {
+    // Create an array to store the probabilities of each class
+    json prob_array = json::array();
+    for (int x = 0; x < kImageSize; x++) {
+      for (int y = 0; y < kImageSize; y++) {
+
+        prob_array.push_back(probs_[x][y][c][kShadedIndex]);
+      }
+    }
+    std::string title = "Class " + std::to_string(c);
+    j[title] = prob_array;
   }
+
+  // Add priors information
+  json class_occurrences = json::array();
+  for (int i = 0; i < kNumClasses; i++) {
+    class_occurrences.push_back(class_num_[i]);
+  }
+  j["Class occurrences"] = class_occurrences;
+
+  // Now create a file?
+  std::ofstream file;
+  file.open("model.json");
+  file << j;
+  file.close();
 }
 
 }  // namespace bayes
