@@ -33,6 +33,7 @@ int main(int argc, char** argv) {
   return EXIT_SUCCESS; */
   // Create model
   bayes::Model model;
-  model.SetClassNum("data/traininglabels");
   model.CalculateProbabilities("data/trainingimages", "data/traininglabels");
+
+  // Classify : O
 }

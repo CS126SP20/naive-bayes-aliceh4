@@ -36,7 +36,7 @@ void Model::SetClassNum(const string& filename) {
 
 void Model::CalculateProbabilities(const string& images, const string& labels) {
   // Initialize probs_ to be all 0
-  /*for (int i = 0; i < kImageSize; i++) {
+  for (int i = 0; i < kImageSize; i++) {
     for (int j = 0; j < kImageSize; j++) {
       for (int c = 0; c < kNumClasses; c++) {
         for (int s = 0; s < kNumShades; s++) {
@@ -44,7 +44,7 @@ void Model::CalculateProbabilities(const string& images, const string& labels) {
         }
       }
     }
-  }*/
+  }
 
 
   SetClassNum(labels);
