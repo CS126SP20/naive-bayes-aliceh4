@@ -22,6 +22,9 @@ constexpr size_t kImageSize = 28;
 class Image {
  private:
   char pixels_[kImageSize][kImageSize];
+ public:
+  // Constructor for image that takes in a string and populates pixels_
+  Image(std::string image);
 };
 
 }  // namespace bayes

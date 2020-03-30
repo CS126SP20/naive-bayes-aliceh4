@@ -59,6 +59,12 @@ class Model {
   // Populate class_num_ from data from the given file
   void SetClassNum(const string& filename);
 
+  // Get locations of a certain class (specific indexes)
+  std::vector<int> GetClassLocations(const string& labels, int num);
+
+  // Loop through the image file and split every 28 lines into an image object
+  std::vector<Image> GetClassImages(const string& images);
+
   // Given a file, populate the probs_ matrix correctly
   // NOTE: images is "data/trainingimages" and labels is "data/traininglabels"
   void CalculateProbabilities(const string& images, const string& labels);
