@@ -7,6 +7,10 @@
 #include <sstream>
 #include <vector>
 
+// Indeces of being shaded or not in our probs_ matrix
+const int kShadedIndex = 1;
+const int kWhiteIndex = 0;
+
 namespace bayes {
 
 void Model::SetClassNum(const string& filename) {
@@ -27,13 +31,37 @@ void Model::SetClassNum(const string& filename) {
 void Model::CalculateProbabilities(const string& images, const string& labels) {
   std::vector<int> class_locations;
   std::vector<Image> image_vector = GetClassImages(images);
-  for (int i = 0; i < kNumClasses; i++) {
+  // Loop through each class
+  for (int c = 0; c < kNumClasses; c++) {
     class_locations.clear(); // Clear contents of vector each time
-    class_locations = GetClassLocations(labels, i); // Populate vector
+    class_locations = GetClassLocations(labels, c); // Populate vector
+    // Now loop thru the pixels
+    for (int j = 0; j < kImageSize; j++) {
+      for (int k = 0; k < kImageSize; k++) {
+        // Populate every vector?? I have no idea ahhhh
+        GetProbabilityAtLocation(j, k, c, class_locations, image_vector);
+      }
+    }
   }
 }
 
-
+double Model::GetProbabilityAtLocation(int i, int j, int class_num,
+                                       std::vector<int> class_locations,
+                                       std::vector<Image> image_vector) {
+  double shaded_sum = 0;
+  for (int index : class_locations) {
+    Image image = image_vector.at(index);
+    char pixel_shade = image.GetCharAtPos(i, j);
+    if (pixel_shade == '+' || pixel_shade == '#') {
+      shaded_sum++; // If pixel is shaded, increment shaded_sum
+    }
+  }
+  double probability = shaded_sum / class_locations.size();
+  // populate probs_ accordingly
+  probs_[i][j][class_num][kShadedIndex] = probability;
+  probs_[i][j][class_num][kWhiteIndex] = kShadedIndex - probability;
+  return probability;
+}
 
 
 std::vector<int> Model::GetClassLocations(const string& labels, int num) {
@@ -65,8 +93,8 @@ std::vector<Image> Model::GetClassImages(const string& images) {
   std::string image_lines; // New string
   while(std::getline(file, line))
   {
-    if (line_num != 0 && line_num % kImageSize == 0) {
-      image_vector.emplace_back(image_lines); // Add image if is n*28th line
+    if (line_num != 0 && (line_num + 1) % kImageSize == 0) {
+      image_vector.push_back(image_lines); // Add image if is n*28th line
       image_lines.clear(); // clear the lines
     }
     image_lines.append(line); // Add the line
@@ -75,10 +103,13 @@ std::vector<Image> Model::GetClassImages(const string& images) {
   return image_vector;
 }
 
-void Model::CreateModelFile(const string& filename) {
-  // Some of the following code derived from:
-  // https://www.gormanalysis.com/blog/reading-and-writing-csv-files-with-cpp/
-  std::ofstream file("model.csv");
+void Model::CreateJsonFile() {
+  // Create an empty json object
+  nlohmann::json j;
+  // Go through our classes and put in corresponding matrices?
+  for (int i = 0; i < kNumClasses; i++) {
+    
+  }
 }
 
 }  // namespace bayes

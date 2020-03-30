@@ -12,23 +12,6 @@ using std::string;
 
 namespace bayes {
 
-/*
- * We've given you a starter struct to represent the model.
- * You are totally allowed to delete, change, move, rename, etc. this struct
- * however you like! In fact, we encourage it! It only exists as a starting
- * point of reference.
- *
- * In our probabilities array we have a final dimension [2], which represents
- * the individual probabilities that a pixel for a class is either shaded or
- * not shaded. Since the probability that a pixel is shaded is just
- * (1 - probability not shaded), we COULD have deleted that final dimension
- * (and you can do so if you want to), but we left it in so that you could
- * see how the model would need to change if we were to keep track of the
- * probability that a pixel is white vs. gray vs. dark gray vs. black.
- *
- * You can delete this comment once you're done with it.
- */
-
 // 0-9 inclusive.
 constexpr size_t kNumClasses = 10;
 // Shaded or not shaded.
@@ -56,21 +39,62 @@ class Model {
   // Array representing the number of occurrences of a specific class
   int class_num_[kNumClasses];
 
-  // Populate class_num_ from data from the given file
+  /**
+   * Takes a file and populates class_num_ with the number of occurrences of
+   * each label.
+   *
+   * @param filename the name of the file
+   */
   void SetClassNum(const string& filename);
 
-  // Get locations of a certain class (specific indexes)
+  /**
+   * Get locations of a certain class (specific indexes) and returns a vector
+   * of the locations.
+   *
+   * @param labels the name of the label file
+   * @param num the class to be examined
+   * @return a vector of the locations for this specific class
+   */
   std::vector<int> GetClassLocations(const string& labels, int num);
 
-  // Loop through the image file and split every 28 lines into an image object
+  /**
+   * Loops through an image file and split every 28 lines into an Image object,
+   * then returns a vector of these Image objects.
+   *
+   * @param images the name of the image file
+   * @return an image vector representation of the file
+   */
   std::vector<Image> GetClassImages(const string& images);
 
-  // Given a file, populate the probs_ matrix correctly
-  // NOTE: images is "data/trainingimages" and labels is "data/traininglabels"
+  /**
+   * Returns the probability of being shades given that they are in a certain
+   * class at the specified point. Also populates the probs_ matrix accordingly.
+   *
+   * @param                 i the 'x' location
+   * @param                 j the 'y' location
+   * @param                 class_num the class being examined
+   * @param class_locations a vector of the locations of the given class
+   * @param image_vector    a vector of all training images
+   * @return the probability of being shaded at the specified parameters
+   */
+  double GetProbabilityAtLocation(int i, int j, int class_num,
+          std::vector<int> class_locations, std::vector<Image> image_vector);
+
+  /**
+   * Takes in two file names, representing the image file and label files
+   * respectively, and populates the probs_ matrix according to its description
+   * above.
+   *
+   * @param images name of the image file
+   * @param labels name of the label file
+   */
   void CalculateProbabilities(const string& images, const string& labels);
 
-  // Create the model file and populate w data
-  void CreateModelFile(const string& filename);
+  /**
+   * Creates a JSON file to save our model, using information from probs_ and
+   * class_num_.
+   */
+  void CreateJsonFile();
 
 };
 

@@ -15,5 +15,9 @@ Image::Image(std::string image) {
   }
 }
 
+char Image::GetCharAtPos(int i, int j) {
+  return pixels_[i][j];
+}
+
 }  // namespace bayes
 

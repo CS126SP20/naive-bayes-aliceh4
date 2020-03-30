@@ -16,3 +16,39 @@ TEST_CASE("Test SetClassNum", "[SetClassNum]") {
   }
   REQUIRE(state);
 }
+
+TEST_CASE("Test GetClassLocations", "[GetClassLocations]") {
+  bayes::Model model;
+  std::vector loc = model.GetClassLocations("data/samplelabels", 0);
+  bool state = true;
+  // Test to see if method returns what we expect
+  if (loc.size() != 1 || loc.at(0) != 1) {
+    state = false;
+  }
+  REQUIRE(state);
+}
+
+TEST_CASE("Test GetClassImages", "[GetClassImages]") {
+  bayes::Model model;
+  std::vector images = model.GetClassImages("data/sampleimages");
+  bool state = true;
+  if (images.size() != 3) {
+    state = false;
+  }
+  REQUIRE(state);
+}
+
+TEST_CASE("Test GetProbabilityAtLocation", "[GetProbabilityAtLocation]") {
+  bayes::Model model;
+  std::vector images = model.GetClassImages("data/sampleimages");
+  std::vector loc = model.GetClassLocations("data/samplelabels", 0);
+  bool state = true;
+  double prob_shaded =
+      model.GetProbabilityAtLocation(3, 15, 0,loc, images);
+  double prob_unshaded =
+      model.GetProbabilityAtLocation(0, 15, 0, loc, images);
+  if (prob_shaded != 1 && prob_unshaded != 1) {
+    state = false;
+  }
+  REQUIRE(state);
+}
