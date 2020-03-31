@@ -149,3 +149,4 @@ data/testimages
 data/testlabels
 data/trainingimages
 data/traininglabels
+data/model.json

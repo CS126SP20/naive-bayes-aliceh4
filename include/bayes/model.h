@@ -78,7 +78,8 @@ class Model {
    * @return the probability of being shaded at the specified parameters
    */
   double GetProbabilityAtLocation(int i, int j, int class_num,
-          std::vector<int> class_locations, std::vector<Image> image_vector);
+                                  const std::vector<int>& class_locations,
+                                  const std::vector<Image>& image_vector);
 
   /**
    * Takes in two file names, representing the image file and label files

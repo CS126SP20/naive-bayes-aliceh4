@@ -10,6 +10,7 @@
 // Indeces of being shaded or not in our probs_ matrix
 const int kShadedIndex = 1;
 const int kWhiteIndex = 0;
+const double kLaplaceConstant = 0.5;
 
 using json = nlohmann::json;
 
@@ -27,10 +28,6 @@ void Model::SetClassNum(const string& filename) {
     iss >> number;
     // Increase the corresponding class index by one
     class_num_[number]++;
-  }
-
-  for (int i = 0; i < 10; i++) {
-    std::cout << class_num_[i] << std::endl;
   }
 }
 
@@ -69,8 +66,8 @@ void Model::CalculateProbabilities(const string& images, const string& labels) {
 }
 
 double Model::GetProbabilityAtLocation(int i, int j, int class_num,
-                                       std::vector<int> class_locations,
-                                       std::vector<Image> image_vector) {
+                                       const std::vector<int>& class_locations,
+                                       const std::vector<Image>& image_vector) {
   double shaded_sum = 0;
   for (int index : class_locations) {
     Image image = image_vector.at(index);
@@ -79,7 +76,8 @@ double Model::GetProbabilityAtLocation(int i, int j, int class_num,
       shaded_sum++; // If pixel is shaded, increment shaded_sum
     }
   }
-  double probability = shaded_sum / class_locations.size();
+  double probability = (kLaplaceConstant + shaded_sum)
+      / (kNumShades*kLaplaceConstant + class_locations.size());
   // populate probs_ accordingly
   probs_[i][j][class_num][kShadedIndex] = probability;
   probs_[i][j][class_num][kWhiteIndex] = kShadedIndex - probability;
@@ -135,7 +133,6 @@ void Model::CreateJsonFile() {
     json prob_array = json::array();
     for (int x = 0; x < kImageSize; x++) {
       for (int y = 0; y < kImageSize; y++) {
-
         prob_array.push_back(probs_[x][y][c][kShadedIndex]);
       }
     }
