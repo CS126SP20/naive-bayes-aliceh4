@@ -6,7 +6,9 @@
 #include "image.h"
 #include <vector>
 #include <nlohmann/json.hpp>
+#include <string>
 
+using std::string;
 using json = nlohmann::json;
 
 namespace bayes {
@@ -28,6 +30,17 @@ double CalculatePosteriorProbability(Image image, int class_num, const json& mod
  * @return an int representation of the class with the highest probability
  */
 int GetClassIdentity(const Image& image, const json& j);
+
+/**
+ * Returns the accuracy of the classifying model after we have already trained
+ * it.
+ *
+ * @param image_path the file path of our testing images
+ * @param label_path the file path of our testing labels
+ * @param model_path the file path of our generated model from training
+ * @return the accuracy of our model in classifying (represented as a percent)
+ */
+double GetClassifierAccuracy(const string& image_path, const string& label_path, const string& model_path);
 
 }  // namespace bayes
 

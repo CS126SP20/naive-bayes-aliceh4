@@ -31,7 +31,7 @@ void Model::SetClassNum(const string& filename) {
   }
 }
 
-void Model::CalculateProbabilities(const string& images, const string& labels) {
+void Model::CalculateProbabilities(const string& images, const string& labels, const string& name) {
   // Initialize probs_ to be all 0
   for (int i = 0; i < kImageSize; i++) {
     for (int j = 0; j < kImageSize; j++) {
@@ -42,10 +42,7 @@ void Model::CalculateProbabilities(const string& images, const string& labels) {
       }
     }
   }
-
-
-  SetClassNum(labels);
-
+  SetClassNum(labels); // Set class_num_ correctly
   std::vector<int> class_locations;
   std::vector<Image> image_vector = GetClassImages(images);
   // Loop through each class
@@ -60,9 +57,8 @@ void Model::CalculateProbabilities(const string& images, const string& labels) {
       }
     }
   }
-
   // Now create the file
-  CreateJsonFile();
+  CreateJsonFile(name);
 }
 
 double Model::GetProbabilityAtLocation(int i, int j, int class_num,
@@ -124,7 +120,7 @@ std::vector<Image> Model::GetClassImages(const string& images) {
   return image_vector;
 }
 
-void Model::CreateJsonFile() {
+void Model::CreateJsonFile(const string& name) {
   // Create an empty json object
   json j;
   // Go through our classes and put in corresponding matrices?
@@ -149,7 +145,7 @@ void Model::CreateJsonFile() {
 
   // Now create a file?
   std::ofstream file;
-  file.open("model.json");
+  file.open(name);
   file << j;
   file.close();
 }

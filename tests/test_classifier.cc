@@ -6,16 +6,21 @@
 #include <bayes/classifier.h>
 #include <bayes/model.h>
 
-
-// TODO(you): Remove this unnecessary test case.
-TEST_CASE("Sanity Check", "[addition]") {
-  REQUIRE(1 + 1 == 2);
+// NOTE: this test case also indirectly tests GetPosteriorProbability, so it is
+// really testing both of the functions in classifier.h
+TEST_CASE("Test GetClassIdentity", "[classifier]") {
+  bayes::Model model{};
+  model.CalculateProbabilities("data/sampleimages",
+      "data/samplelabels", "samplemodel.json");
+  std::ifstream file("samplemodel.json");
+  json j = json::parse(file);
+  std::vector images = bayes::Model::GetClassImages("data/sampleimages");
+  int predicted_class = bayes::GetClassIdentity(images.at(0), j);
+  REQUIRE(predicted_class == 5);
 }
 
-TEST_CASE("bleh Check", "[addition]") {
-  bayes::Model model;
-  std::vector images = model.GetClassImages("data/sampleimages");
-  bayes::CalculatePosteriorProbability(images.at(0), 5);
-
-  REQUIRE(1 + 1 == 2);
+TEST_CASE("Test GetClassifierAccuracy", "[GetClassifierAccuracy]") {
+  double accuracy = bayes::GetClassifierAccuracy("data/sampleimages",
+      "data/samplelabels", "samplemodel.json");
+  REQUIRE(accuracy >= 70);
 }

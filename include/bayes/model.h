@@ -55,7 +55,7 @@ class Model {
    * @param num the class to be examined
    * @return a vector of the locations for this specific class
    */
-  std::vector<int> GetClassLocations(const string& labels, int num);
+  static std::vector<int> GetClassLocations(const string& labels, int num);
 
   /**
    * Loops through an image file and split every 28 lines into an Image object,
@@ -64,7 +64,7 @@ class Model {
    * @param images the name of the image file
    * @return an image vector representation of the file
    */
-  std::vector<Image> GetClassImages(const string& images);
+  static std::vector<Image> GetClassImages(const string& images);
 
   /**
    * Returns the probability of being shades given that they are in a certain
@@ -88,14 +88,16 @@ class Model {
    *
    * @param images name of the image file
    * @param labels name of the label file
+   * @param name   the name the user wants the model to have
    */
-  void CalculateProbabilities(const string& images, const string& labels);
+  void CalculateProbabilities(const string& images, const string& labels, const string& name);
 
   /**
    * Creates a JSON file to save our model, using information from probs_ and
    * class_num_.
+   * @param name what the user wants the file to be named
    */
-  void CreateJsonFile();
+  void CreateJsonFile(const string& name);
 
 };
 

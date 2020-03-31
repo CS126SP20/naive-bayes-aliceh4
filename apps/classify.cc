@@ -1,7 +1,6 @@
-// Copyright (c) 2020 [Your Name]. All rights reserved.
+// Copyright (c) 2020 [Alice Huang]. All rights reserved.
 
 #include <bayes/classifier.h>
-#include <bayes/image.h>
 #include <bayes/model.h>
 #include <gflags/gflags.h>
 #include <nlohmann/json.hpp>
@@ -9,60 +8,35 @@
 #include <string>
 #include <cstdlib>
 #include <iostream>
-#include <fstream>
-#include <sstream>
 
 using json = nlohmann::json;
-// TODO(you): Change the code below for your project use case.
 
-DEFINE_string(name, "Clarice", "Your first name");
-DEFINE_bool(happy, false, "Whether the greeting is a happy greeting");
-
+DEFINE_string(image_path, "data/testimages", "The images filepath.");
+DEFINE_string(label_path, "data/testlabels", "The labels filepath.");
+DEFINE_bool(is_training, true, "Whether we are training or not.");
+DEFINE_string(model_path, "data/model.json", "The model filepath.");
 
 int main(int argc, char** argv) {
-  /*gflags::SetUsageMessage(
-      "Greets you with your name. Pass --helpshort for options.");
+  gflags::SetUsageMessage(
+      "Should either train your model or classify the given file sets"
+             ". Pass --helpshort for options.");
 
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-  if (FLAGS_name.empty()) {
-    std::cerr << "Please provide a name via the --name flag." << std::endl;
+  if (FLAGS_image_path.empty() || FLAGS_label_path.empty()) {
+    std::cerr << "Please provide filepaths via the --image_path and "
+                 "--label_path flag." << std::endl;
     return EXIT_FAILURE;
   }
-
-  const std::string punctuation = FLAGS_happy ? "!" : ".";
-
-  std::cout << "Hello, " << FLAGS_name << punctuation << std::endl;
-  return EXIT_SUCCESS; */
-
-  std::ifstream file("data/model.json");
-  json j = json::parse(file);
-  bayes::Model model;
-  std::vector images = model.GetClassImages("data/testimages");
-
-  int sum = 0;
-  int num = 0;
-  std::ifstream file_labels("data/testlabels");
-  std::string line;
-  while (std::getline(file_labels, line)) {
-    std::istringstream iss (line);
-    int number;
-    iss >> number;
-    if (number == bayes::GetClassIdentity(images.at(num), j)) {
-      sum++;
-    }
-    num++;
+  if (FLAGS_is_training) {
+    bayes::Model model{};
+    model.CalculateProbabilities(FLAGS_image_path, FLAGS_label_path,
+        FLAGS_model_path);
+    std::cout << "Training finished!" << std::endl;
+    return EXIT_SUCCESS;
   }
-  double accuracy = (double) sum / num * 100.0;
-  std::cout << accuracy << std::endl;
-
-  // Create model
-
-  /*bayes::Model model;
-  model.CalculateProbabilities("data/trainingimages", "data/traininglabels");*/
-
-  // Classify:
-  // Now that we have the probabilities, run thru the images in testimages and
-  // compare what we get with what the labels are...
-  // NOTE: accuracy = double (# correct) / (5000) * 100
+  double accuracy = bayes::GetClassifierAccuracy(FLAGS_image_path,
+      FLAGS_label_path, FLAGS_model_path);
+  std::cout << "Classifier accuracy: " << accuracy  << "%" << std::endl;
+  return EXIT_SUCCESS;
 }
