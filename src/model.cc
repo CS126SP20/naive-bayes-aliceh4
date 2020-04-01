@@ -3,11 +3,10 @@
 #include <bayes/model.h>
 #include <nlohmann/json.hpp>
 #include <fstream>
-#include <iostream>
 #include <sstream>
 #include <vector>
 
-// Indeces of being shaded or not in our probs_ matrix
+// Index of being shaded or not in our probs_ matrix
 const int kShadedIndex = 1;
 const int kWhiteIndex = 0;
 const double kLaplaceConstant = 0.5;
@@ -19,7 +18,6 @@ namespace bayes {
 void Model::SetClassNum(const string& filename) {
   // First empty array (in case it has been populated)
   std::fill_n(class_num_, kNumClasses, 0);
-
   std::ifstream file(filename);
   std::string line;
   while (std::getline(file, line)) {
@@ -84,7 +82,6 @@ double Model::GetProbabilityAtLocation(int i, int j, int class_num,
 std::vector<int> Model::GetClassLocations(const string& labels, int num) {
   // Create new vector
   std::vector<int> class_locations;
-
   int line_num = 0;
   std::ifstream file(labels);
   std::string line;
@@ -135,15 +132,13 @@ void Model::CreateJsonFile(const string& name) {
     std::string title = "Class " + std::to_string(c);
     j[title] = prob_array;
   }
-
   // Add priors information
   json class_occurrences = json::array();
   for (int i = 0; i < kNumClasses; i++) {
     class_occurrences.push_back(class_num_[i]);
   }
   j["Class occurrences"] = class_occurrences;
-
-  // Now create a file?
+  // Now create a file
   std::ofstream file;
   file.open(name);
   file << j;

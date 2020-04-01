@@ -1,4 +1,4 @@
-// Copyright 2020 [Your Name]. All rights reserved.
+// Copyright 2020 [Alice Huang]. All rights reserved.
 
 #include <bayes/image.h>
 #include <string>

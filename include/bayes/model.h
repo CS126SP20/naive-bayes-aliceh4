@@ -1,4 +1,4 @@
-// Copyright (c) 2020 [Your Name]. All rights reserved.
+// Copyright (c) 2020 [Alice Huang]. All rights reserved.
 
 #ifndef BAYES_MODEL_H_
 #define BAYES_MODEL_H_

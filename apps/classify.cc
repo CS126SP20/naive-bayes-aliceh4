@@ -4,6 +4,7 @@
 #include <bayes/model.h>
 #include <gflags/gflags.h>
 #include <nlohmann/json.hpp>
+#include <bayes/file_reader.h>
 
 #include <string>
 #include <cstdlib>
@@ -20,14 +21,19 @@ int main(int argc, char** argv) {
   gflags::SetUsageMessage(
       "Should either train your model or classify the given file sets"
              ". Pass --helpshort for options.");
-
   gflags::ParseCommandLineFlags(&argc, &argv, true);
-
-  if (FLAGS_image_path.empty() || FLAGS_label_path.empty()) {
-    std::cerr << "Please provide filepaths via the --image_path and "
-                 "--label_path flag." << std::endl;
+  // Check if files exist
+  if (!FileReader::DoesFileExist(FLAGS_label_path) ||
+      !FileReader::DoesFileExist(FLAGS_image_path)) {
+    std::cout << "A file inputted does not exist.";
     return EXIT_FAILURE;
   }
+  // Check that the two files are valid in format
+  if (!FileReader::IsValidImageLabelFile(FLAGS_image_path, FLAGS_label_path)) {
+    std::cout << "Image and label files do not match.";
+    return EXIT_FAILURE;
+  }
+  // Now train or classify
   if (FLAGS_is_training) {
     bayes::Model model{};
     model.CalculateProbabilities(FLAGS_image_path, FLAGS_label_path,
